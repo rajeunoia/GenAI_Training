@@ -236,41 +236,54 @@
     return shuffled.slice(0, n);
   }
   const selectedQuestions = getRandomQuestions(questions, 10);
-  selectedQuestions.forEach((q, idx) => {
-    const div = document.createElement('div');
-    div.className = 'question';
-    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
-      '<div class="options">' +
-      q.options.map((opt, i) =>
-        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
-      ).join('') +
-      '</div>';
-    form.appendChild(div);
-  });
+    selectedQuestions.forEach((q, idx) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+        '<div class="options">' +
+        q.options.map((opt, i) =>
+          `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+        ).join('') +
+        '</div>' +
+        `<div class="feedback" id="feedback${idx}" style="margin-top:0.3rem;"></div>`;
+      form.appendChild(div);
+    });
   const submitBtn = document.createElement('button');
   submitBtn.type = 'button';
   submitBtn.textContent = 'Submit';
   form.appendChild(submitBtn);
 
-  submitBtn.onclick = function() {
-    let score = 0;
-    for (let i = 0; i < selectedQuestions.length; i++) {
-      const selected = form.querySelector(`input[name="q${i}"]:checked`);
-      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
-        score++;
+    submitBtn.onclick = function() {
+      let score = 0;
+      for (let i = 0; i < selectedQuestions.length; i++) {
+        const selected = form.querySelector(`input[name="q${i}"]:checked`);
+        const feedbackDiv = document.getElementById(`feedback${i}`);
+        if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+          score++;
+          feedbackDiv.textContent = 'Correct!';
+          feedbackDiv.style.color = '#49d17a';
+        } else {
+          feedbackDiv.textContent = `Incorrect. Correct answer: ${selectedQuestions[i].options[selectedQuestions[i].answer]}`;
+          feedbackDiv.style.color = '#ffd166';
+        }
       }
-    }
-    const percent = (score / selectedQuestions.length) * 100;
-    const resultDiv = document.getElementById('result');
-    if (percent >= 80) {
-      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
-      resultDiv.style.color = '#49d17a';
-    } else {
-      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
-      resultDiv.style.color = '#ffd166';
-      document.getElementById('retryBtn').onclick = function() { location.reload(); };
-    }
-  };
+      const percent = (score / selectedQuestions.length) * 100;
+      const resultDiv = document.getElementById('result');
+      let resultHtml = '';
+      if (percent >= 80) {
+        resultHtml = `Pass! You scored ${score}/10 (${percent}%)`;
+        resultDiv.style.color = '#49d17a';
+      } else {
+        resultHtml = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+        resultDiv.style.color = '#ffd166';
+      }
+      resultHtml += `<br><button id='mainBtn' style='margin-top:1rem;background:#7aa2ff;color:#fff;'>Back to Main Page</button>`;
+      resultDiv.innerHTML = resultHtml;
+      if (percent < 80) {
+        document.getElementById('retryBtn').onclick = function() { location.reload(); };
+      }
+      document.getElementById('mainBtn').onclick = function() { window.location.href = '../GenAi_Training.html'; };
+    };
   </script>
 </body>
 </html>
