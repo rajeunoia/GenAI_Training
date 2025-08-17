@@ -254,9 +254,13 @@
   form.appendChild(submitBtn);
 
     submitBtn.onclick = function() {
+      // Disable submit button and all radio inputs after first submission
+      submitBtn.disabled = true;
+      const radios = form.querySelectorAll('input[type="radio"]');
+      radios.forEach(r => r.disabled = true);
       let score = 0;
       for (let i = 0; i < selectedQuestions.length; i++) {
-        const selected = form.querySelector(`input[name="q${i}"]:checked`);
+        const selected = form.querySelector(`input[name=\"q${i}\"]:checked`);
         const feedbackDiv = document.getElementById(`feedback${i}`);
         if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
           score++;
