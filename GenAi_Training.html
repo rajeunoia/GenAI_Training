@@ -141,7 +141,14 @@
       <header>
         <div class="pill">Program</div>
         <h1>GenAI Engineer — 6-Week Training Plan</h1>
-        <div class="meta">Team size: 6–8 freshers • Stack: Ollama → Bedrock → Azure OpenAI • Vector DB: Chroma • Frameworks: LangChain (primary), CrewAI (secondary) • Protocols: MCP, ACP/A2A • Includes capstone</div>
+        <ul class="meta" style="margin:0.5rem 0 0 0.5rem;list-style:disc inside;">
+          <li>Team size: 6–8 freshers</li>
+          <li>Stack: Ollama → Bedrock → Azure OpenAI</li>
+          <li>Vector DB: Chroma</li>
+          <li>Frameworks: LangChain (primary), CrewAI (secondary)</li>
+          <li>Protocols: MCP, ACP/A2A</li>
+          <li>Includes capstone</li>
+        </ul>
       </header>
 
     <div class="sep"></div>
@@ -158,6 +165,35 @@
         <a href="#mapping">Course → Topic Mapping</a>
         <a href="#gaps">Coverage Status — All Topics Accounted For</a>
       </div>
+    </section>
+
+    <section class="card" id="prereq-section" style="margin-bottom:1.5rem;">
+      <h2>Prerequisites <span style="font-size:1rem;color:var(--muted);font-weight:normal;">(for all participants)</span></h2>
+      <div id="prereq-summary">
+        <span>Modern laptop (16GB+ RAM), Python basics, and ability to install software required. <button id="prereq-toggle" style="background:var(--accent);color:#fff;border:none;padding:0.2rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.95rem;margin-left:0.7rem;">View more</button></span>
+      </div>
+      <div id="prereq-details" style="display:none;margin-top:1rem;">
+        <ul>
+          <li><strong>Laptop & System:</strong> Modern laptop (Mac/Windows/Linux) with <strong>16GB RAM minimum</strong> (for local LLMs), 50GB+ free disk, reliable internet, admin rights, webcam & mic.</li>
+          <li><strong>Software:</strong> Python 3.11+, VS Code, Git & GitHub, browser, ability to install Docker (optional), Jupyter (optional).</li>
+          <li><strong>Programming:</strong> Basic Python (variables, functions, classes, file I/O), command line/shell basics, virtual environments (venv/Poetry), basic git usage.</li>
+          <li><strong>Other:</strong> Willingness to learn new frameworks (LangChain, CrewAI), basic AI/ML concepts (helpful), comfort with docs & troubleshooting.</li>
+          <li><strong>Optional:</strong> Experience with Jupyter, REST APIs, web dev, SQL/databases.</li>
+        </ul>
+      </div>
+      <script>
+        const prereqToggle = document.getElementById('prereq-toggle');
+        const prereqDetails = document.getElementById('prereq-details');
+        prereqToggle.onclick = function() {
+          if (prereqDetails.style.display === 'none') {
+            prereqDetails.style.display = 'block';
+            prereqToggle.textContent = 'View less';
+          } else {
+            prereqDetails.style.display = 'none';
+            prereqToggle.textContent = 'View more';
+          }
+        };
+      </script>
     </section>
 
     <!-- WEEK 1 -->
