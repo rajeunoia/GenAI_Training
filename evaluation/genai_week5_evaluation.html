@@ -235,7 +235,21 @@
     const shuffled = arr.slice().sort(() => 0.5 - Math.random());
     return shuffled.slice(0, n);
   }
-  const selectedQuestions = getRandomQuestions(questions, 10);
+    const selectedQuestions = questions.sort(() => 0.5 - Math.random()).slice(0, 10).map(q => {
+      // Shuffle options and track the new answer index
+      const optionIndexes = q.options.map((_, i) => i);
+      for (let i = optionIndexes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [optionIndexes[i], optionIndexes[j]] = [optionIndexes[j], optionIndexes[i]];
+      }
+      const shuffledOptions = optionIndexes.map(i => q.options[i]);
+      const newAnswer = optionIndexes.indexOf(q.answer);
+      return {
+        q: q.q,
+        options: shuffledOptions,
+        answer: newAnswer
+      };
+    });
     selectedQuestions.forEach((q, idx) => {
       const div = document.createElement('div');
       div.className = 'question';
