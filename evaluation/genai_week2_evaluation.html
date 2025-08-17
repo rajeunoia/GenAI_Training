@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 2 Evaluation</title>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 2 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+    {
+      q: "What is a vector database primarily used for in GenAI applications?",
+      options: [
+        "Storing tabular data",
+        "Storing and searching high-dimensional embeddings",
+        "Managing user authentication",
+        "Serving web pages"
+      ],
+      answer: 1
+    },
+    {
+      q: "What does RAG stand for in the context of LLM applications?",
+      options: [
+        "Retrieval-Augmented Generation",
+        "Random Access Generation",
+        "Rapid AI Generation",
+        "Recursive Agent Generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key benefit of using RAG pipelines?",
+      options: [
+        "They allow LLMs to access up-to-date or proprietary information",
+        "They reduce the size of the LLM",
+        "They eliminate the need for prompts",
+        "They are only used for image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is ChromaDB?",
+      options: [
+        "A vector database for storing and searching embeddings",
+        "A cloud hosting provider",
+        "A Python linter",
+        "A web server"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which step is NOT part of a typical RAG pipeline?",
+      options: [
+        "Embedding documents",
+        "Similarity search",
+        "LLM generation",
+        "Model training from scratch"
+      ],
+      answer: 3
+    },
+    {
+      q: "What is an embedding in the context of vector databases?",
+      options: [
+        "A compressed image",
+        "A high-dimensional numeric representation of data",
+        "A database schema",
+        "A type of neural network"
+      ],
+      answer: 1
+    },
+    {
+      q: "Which library is commonly used for building RAG pipelines in Python?",
+      options: [
+        "LangChain",
+        "TensorFlow",
+        "Flask",
+        "Pandas"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main function of a retriever in a RAG pipeline?",
+      options: [
+        "To generate text",
+        "To fetch relevant documents or chunks from a database",
+        "To train the LLM",
+        "To visualize embeddings"
+      ],
+      answer: 1
+    },
+    {
+      q: "Which of the following is a common use case for ChromaDB?",
+      options: [
+        "Similarity search over document embeddings",
+        "Web hosting",
+        "Image classification",
+        "Data labeling"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the purpose of reranking in a RAG pipeline?",
+      options: [
+        "To sort retrieved documents by relevance",
+        "To train the retriever",
+        "To compress embeddings",
+        "To generate prompts"
+      ],
+      answer: 0
+    },
+    // 10 more conceptual questions for Week 2
+    {
+      q: "Which component is responsible for generating the final answer in a RAG pipeline?",
+      options: [
+        "Retriever",
+        "LLM (Large Language Model)",
+        "Vector database",
+        "Web server"
+      ],
+      answer: 1
+    },
+    {
+      q: "What is a typical input to the embedding model in a RAG pipeline?",
+      options: [
+        "Raw text documents",
+        "Database schemas",
+        "Image files",
+        "Compiled code"
+      ],
+      answer: 0
+    },
+    {
+      q: "Why is it important to chunk documents before embedding them?",
+      options: [
+        "To reduce memory usage",
+        "To improve retrieval granularity and relevance",
+        "To speed up LLM inference",
+        "To avoid using prompts"
+      ],
+      answer: 1
+    },
+    {
+      q: "Which of the following is a limitation of RAG pipelines?",
+      options: [
+        "They may retrieve irrelevant or outdated information",
+        "They cannot use LLMs",
+        "They only work for images",
+        "They do not use embeddings"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main advantage of using a vector database over a traditional SQL database for RAG?",
+      options: [
+        "Efficient similarity search in high-dimensional space",
+        "Better support for tabular data",
+        "Faster sorting of numbers",
+        "Easier to use for transactions"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice when building a RAG pipeline?",
+      options: [
+        "Regularly update the document embeddings",
+        "Never update the database",
+        "Use only one large chunk for all documents",
+        "Avoid using retrievers"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the role of the LLM in a RAG pipeline?",
+      options: [
+        "To generate answers using retrieved context",
+        "To store embeddings",
+        "To chunk documents",
+        "To rerank search results"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a feature of ChromaDB?",
+      options: [
+        "Similarity search",
+        "Document embedding",
+        "Web page rendering",
+        "Metadata filtering"
+      ],
+      answer: 2
+    },
+    {
+      q: "What is a common metric used to measure similarity between embeddings?",
+      options: [
+        "Cosine similarity",
+        "Mean squared error",
+        "Accuracy",
+        "Recall"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following best describes the flow of a RAG pipeline?",
+      options: [
+        "User query → Retriever → LLM → Answer",
+        "User query → LLM → Retriever → Answer",
+        "User query → Vector DB → LLM → Retriever",
+        "User query → Web server → Retriever → LLM"
+      ],
+      answer: 0
+    }
+  ];
+
+  const form = document.getElementById('quizForm');
+  // Shuffle and select 10 random questions
+  function getRandomQuestions(arr, n) {
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
+  const selectedQuestions = getRandomQuestions(questions, 10);
+  selectedQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+      '<div class="options">' +
+      q.options.map((opt, i) =>
+        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+      ).join('') +
+      '</div>';
+    form.appendChild(div);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'button';
+  submitBtn.textContent = 'Submit';
+  form.appendChild(submitBtn);
+
+  submitBtn.onclick = function() {
+    let score = 0;
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const selected = form.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        score++;
+      }
+    }
+    const percent = (score / selectedQuestions.length) * 100;
+    const resultDiv = document.getElementById('result');
+    if (percent >= 80) {
+      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+      resultDiv.style.color = '#49d17a';
+    } else {
+      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+      resultDiv.style.color = '#ffd166';
+      document.getElementById('retryBtn').onclick = function() { location.reload(); };
+    }
+  };
+  </script>
+</body>
+</html>

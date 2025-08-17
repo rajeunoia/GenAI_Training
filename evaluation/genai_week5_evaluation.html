@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 5 Evaluation</title>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 5 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+    {
+      q: "What does MCP stand for in the context of GenAI protocols?",
+      options: [
+        "Model Context Protocol",
+        "Multi-agent Communication Protocol",
+        "Machine Control Program",
+        "Model Communication Platform"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main purpose of the MCP protocol?",
+      options: [
+        "To enable rich context sharing between agents and tools",
+        "To train neural networks",
+        "To store embeddings",
+        "To generate prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "What does ACP (A2A) stand for?",
+      options: [
+        "Agent Communication Protocol (Agent-to-Agent)",
+        "Automated Control Platform",
+        "Advanced Communication Protocol",
+        "Agent Context Processor"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key feature of the MCP protocol?",
+      options: [
+        "Standardized message formats for agent-tool communication",
+        "Image generation",
+        "Database schema management",
+        "Web page rendering"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a local MCP server used for?",
+      options: [
+        "Exposing tools (like DB or KB) to MCP-capable clients",
+        "Training neural networks",
+        "Storing embeddings",
+        "Generating prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main benefit of using ACP/A2A protocols?",
+      options: [
+        "Enabling structured agent-to-agent communication and task handoff",
+        "Speeding up model training",
+        "Reducing database size",
+        "Improving image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for implementing agent communication protocols?",
+      options: [
+        "Define clear message schemas and handle errors gracefully",
+        "Ignore all errors",
+        "Never log communication",
+        "Allow all agents to communicate freely without structure"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a key challenge in agent-to-agent communication?",
+      options: [
+        "Ensuring reliable message delivery and task coordination",
+        "Reducing model size",
+        "Improving image generation",
+        "Speeding up database queries"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a typical use case for a local MCP server?",
+      options: [
+        "Serving as an interface between agents and local tools/databases",
+        "Training neural networks",
+        "Storing embeddings",
+        "Generating prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a benefit of using standardized protocols in multi-agent systems?",
+      options: [
+        "Interoperability and easier integration of diverse agents and tools",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    // 10 more conceptual questions for Week 5
+    {
+      q: "What is a message schema in the context of agent communication?",
+      options: [
+        "A structured format defining the content and structure of messages",
+        "A database schema",
+        "A type of neural network",
+        "A prompt template"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a limitation of agent-to-agent protocols?",
+      options: [
+        "Increased complexity in coordination and error handling",
+        "They always require internet access",
+        "They cannot use prompt templates",
+        "They only work for images"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a best practice for testing MCP/ACP implementations?",
+      options: [
+        "Use a set of test cases with known expected outcomes",
+        "Only test with random queries",
+        "Never log errors",
+        "Ignore user feedback"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a 'handoff' in the context of ACP/A2A?",
+      options: [
+        "Transferring a task or message from one agent to another",
+        "Training a neural network",
+        "Storing embeddings",
+        "Generating prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a feature of the MCP protocol?",
+      options: [
+        "Standardized message formats",
+        "Web page rendering",
+        "Context sharing",
+        "Tool exposure"
+      ],
+      answer: 1
+    },
+    {
+      q: "What is a common metric for evaluating agent communication?",
+      options: [
+        "Message delivery success rate",
+        "Model size",
+        "Image quality",
+        "Database speed"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a recommended way to handle errors in agent protocols?",
+      options: [
+        "Log errors and provide informative feedback",
+        "Ignore all errors",
+        "Only log errors to a file",
+        "Never validate user input"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main advantage of using ACP/A2A for agent handoff?",
+      options: [
+        "Structured and reliable task transfer between agents",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a typical use case for MCP/ACP protocols?",
+      options: [
+        "Agent-to-agent task coordination",
+        "Web page rendering",
+        "Tool exposure",
+        "Context sharing"
+      ],
+      answer: 1
+    },
+    {
+      q: "Which of the following best describes the flow of an agent handoff using ACP?",
+      options: [
+        "Agent 1 receives task → Prepares message → Sends to Agent 2 → Agent 2 processes and responds",
+        "Agent 1 trains model → Agent 2 stores embeddings",
+        "Agent 1 generates image → Agent 2 renders web page",
+        "Agent 1 queries database → Agent 2 visualizes results"
+      ],
+      answer: 0
+    }
+  ];
+
+  const form = document.getElementById('quizForm');
+  // Shuffle and select 10 random questions
+  function getRandomQuestions(arr, n) {
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
+  const selectedQuestions = getRandomQuestions(questions, 10);
+  selectedQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+      '<div class="options">' +
+      q.options.map((opt, i) =>
+        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+      ).join('') +
+      '</div>';
+    form.appendChild(div);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'button';
+  submitBtn.textContent = 'Submit';
+  form.appendChild(submitBtn);
+
+  submitBtn.onclick = function() {
+    let score = 0;
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const selected = form.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        score++;
+      }
+    }
+    const percent = (score / selectedQuestions.length) * 100;
+    const resultDiv = document.getElementById('result');
+    if (percent >= 80) {
+      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+      resultDiv.style.color = '#49d17a';
+    } else {
+      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+      resultDiv.style.color = '#ffd166';
+      document.getElementById('retryBtn').onclick = function() { location.reload(); };
+    }
+  };
+  </script>
+</body>
+</html>

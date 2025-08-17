@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 6 Evaluation</title>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 6 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+    {
+      q: "What is the main goal of the Week 6 capstone project?",
+      options: [
+        "Integrate RAG, SQL, MCP, and ACP/A2A with evaluation and guardrails",
+        "Train a neural network from scratch",
+        "Build a web server",
+        "Visualize embeddings"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is finetuning in the context of LLMs?",
+      options: [
+        "Adapting a pre-trained model to a specific task or dataset",
+        "Training a model from scratch",
+        "Evaluating model outputs",
+        "Compressing the model"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a benefit of adding guardrails to LLM applications?",
+      options: [
+        "Improved safety and control over model outputs",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is tracing in the context of GenAI applications?",
+      options: [
+        "Monitoring and recording the flow of data and decisions in the system",
+        "Training neural networks",
+        "Storing embeddings",
+        "Generating prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key step in building an end-to-end GenAI system?",
+      options: [
+        "Integrating multiple components (RAG, SQL, MCP, ACP/A2A)",
+        "Only using a single tool",
+        "Ignoring evaluation",
+        "Focusing only on model size"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a capstone project?",
+      options: [
+        "A comprehensive project that integrates multiple skills and concepts",
+        "A database schema",
+        "A type of neural network",
+        "A prompt template"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for evaluating end-to-end GenAI systems?",
+      options: [
+        "Use a golden set of test cases and measure relevant metrics",
+        "Only test with random queries",
+        "Never log errors",
+        "Ignore user feedback"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main advantage of using tracing hooks in GenAI applications?",
+      options: [
+        "Easier debugging, monitoring, and improvement of system behavior",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a limitation of end-to-end GenAI systems?",
+      options: [
+        "Increased complexity in integration and evaluation",
+        "They always require internet access",
+        "They cannot use prompt templates",
+        "They only work for images"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a recommended way to implement basic guardrails in LLM applications?",
+      options: [
+        "PII redaction and content filtering",
+        "Ignore all errors",
+        "Only log errors to a file",
+        "Never validate user input"
+      ],
+      answer: 0
+    },
+    // 10 more conceptual questions for Week 6
+    {
+      q: "What is the role of evaluation in the capstone project?",
+      options: [
+        "To measure the effectiveness and reliability of the integrated system",
+        "To train neural networks",
+        "To store embeddings",
+        "To generate prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key challenge in integrating RAG, SQL, MCP, and ACP/A2A?",
+      options: [
+        "Ensuring smooth data flow and communication between components",
+        "Reducing model size",
+        "Improving image generation",
+        "Speeding up database queries"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a benefit of including a README and demo script in the capstone project?",
+      options: [
+        "Improved reproducibility and ease of understanding for others",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a feature of a well-integrated GenAI system?",
+      options: [
+        "Lack of communication between components",
+        "Seamless data flow",
+        "Robust evaluation",
+        "Basic guardrails"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main purpose of content filtering in LLM applications?",
+      options: [
+        "To prevent the generation of inappropriate or unsafe outputs",
+        "To speed up model training",
+        "To reduce database size",
+        "To improve image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for team-based capstone projects?",
+      options: [
+        "Collaborate, document, and test all components thoroughly",
+        "Work in isolation",
+        "Ignore documentation",
+        "Never test the system"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a limitation of using only one evaluation metric in GenAI systems?",
+      options: [
+        "It may not capture all aspects of system performance",
+        "It speeds up model training",
+        "It reduces database size",
+        "It improves image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a recommended way to improve system reliability?",
+      options: [
+        "Add tracing, guardrails, and thorough evaluation",
+        "Ignore all errors",
+        "Only log errors to a file",
+        "Never validate user input"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main advantage of integrating multiple GenAI components?",
+      options: [
+        "Ability to solve more complex and realistic problems",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following best describes the flow of an end-to-end GenAI capstone system?",
+      options: [
+        "User query → RAG/SQL/MCP/ACP components → Evaluation/Guardrails → Final answer",
+        "User query → LLM → Retriever → Answer",
+        "User query → Web server → Retriever → LLM",
+        "User query → Vector DB → LLM → Retriever"
+      ],
+      answer: 0
+    }
+  ];
+
+  const form = document.getElementById('quizForm');
+  // Shuffle and select 10 random questions
+  function getRandomQuestions(arr, n) {
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
+  const selectedQuestions = getRandomQuestions(questions, 10);
+  selectedQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+      '<div class="options">' +
+      q.options.map((opt, i) =>
+        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+      ).join('') +
+      '</div>';
+    form.appendChild(div);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'button';
+  submitBtn.textContent = 'Submit';
+  form.appendChild(submitBtn);
+
+  submitBtn.onclick = function() {
+    let score = 0;
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const selected = form.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        score++;
+      }
+    }
+    const percent = (score / selectedQuestions.length) * 100;
+    const resultDiv = document.getElementById('result');
+    if (percent >= 80) {
+      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+      resultDiv.style.color = '#49d17a';
+    } else {
+      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+      resultDiv.style.color = '#ffd166';
+      document.getElementById('retryBtn').onclick = function() { location.reload(); };
+    }
+  };
+  </script>
+</body>
+</html>

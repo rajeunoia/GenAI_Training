@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 1 Evaluation</title>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 1 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+      {
+        q: "What is the main advantage of using prompt engineering with LLMs like ChatGPT?",
+        options: [
+          "It allows you to control the model's output more precisely",
+          "It makes the model run faster",
+          "It reduces the size of the model",
+          "It eliminates the need for training data"
+        ],
+        answer: 0
+      },
+      {
+        q: "Which of the following is a best practice in prompt engineering?",
+        options: [
+          "Use vague instructions",
+          "Be explicit and provide examples",
+          "Avoid specifying output format",
+          "Always use the same prompt for all tasks"
+        ],
+        answer: 1
+      },
+      {
+        q: "What is a Large Language Model (LLM)?",
+        options: [
+          "A model trained to generate images",
+          "A model trained on large amounts of text to generate and understand language",
+          "A database management system",
+          "A tool for compiling code"
+        ],
+        answer: 1
+      },
+      {
+        q: "Which of the following is a use case for LangChain?",
+        options: [
+          "Building chains of LLM calls for complex workflows",
+          "Training neural networks from scratch",
+          "Managing cloud infrastructure",
+          "Creating web page layouts"
+        ],
+        answer: 0
+      },
+      {
+        q: "What is the purpose of function calling in LLMs (as seen in ChatGPT Prompt Engineering for Developers)?",
+        options: [
+          "To allow the LLM to execute Python code directly",
+          "To enable the LLM to call external tools or APIs based on user input",
+          "To speed up model inference",
+          "To reduce memory usage"
+        ],
+        answer: 1
+      },
+      {
+        q: "What is the main benefit of using Ollama as shown in the 'Learn Ollama in 15 Minutes' video?",
+        options: [
+          "It allows you to run LLMs locally on your machine",
+          "It is a cloud-based LLM service",
+          "It is used for image generation",
+          "It is a code editor"
+        ],
+        answer: 0
+      },
+      {
+        q: "Which of the following is a key feature of GitHub Copilot?",
+        options: [
+          "Automated code suggestions and completions in your IDE",
+          "Database management",
+          "Model training",
+          "Web hosting"
+        ],
+        answer: 0
+      },
+      {
+        q: "In LangChain, what is a 'PromptTemplate'?",
+        options: [
+          "A tool for visualizing data",
+          "A way to structure prompts for LLMs with variables",
+          "A database schema",
+          "A code linter"
+        ],
+        answer: 1
+      },
+      {
+        q: "According to the 'Generative AI with LLMs' course, what is a key step in the generative AI project lifecycle?",
+        options: [
+          "Prompt engineering and evaluation",
+          "Ignoring user feedback",
+          "Only using pre-trained models without modification",
+          "Focusing only on model size"
+        ],
+        answer: 0
+      },
+      {
+        q: "What is a good practice when evaluating the output of an LLM?",
+        options: [
+          "Check for correctness and relevance to the prompt",
+          "Assume all outputs are correct",
+          "Ignore the output format",
+          "Never use examples in prompts"
+        ],
+        answer: 0
+
+      },
+      // --- New questions based on Generative AI with LLMs Week 1 ---
+      {
+        q: "What is a key difference between generative AI and traditional AI?",
+        options: [
+          "Generative AI creates new content, traditional AI only classifies or predicts",
+          "Traditional AI is always more accurate",
+          "Generative AI cannot use neural networks",
+          "Traditional AI is only used for games"
+        ],
+        answer: 0
+      },
+      {
+        q: "Which of the following is a common application of generative AI?",
+        options: [
+          "Text summarization",
+          "Image generation",
+          "Code generation",
+          "All of the above"
+        ],
+        answer: 3
+      },
+      {
+        q: "What is the main purpose of pre-training in LLMs?",
+        options: [
+          "To learn general language patterns from large text corpora",
+          "To fine-tune on specific tasks",
+          "To reduce model size",
+          "To evaluate model outputs"
+        ],
+        answer: 0
+      },
+      {
+        q: "Which of the following best describes 'zero-shot' learning in LLMs?",
+        options: [
+          "The model can perform a task without any task-specific examples",
+          "The model requires thousands of examples",
+          "The model only works for image data",
+          "The model is not pre-trained"
+        ],
+        answer: 0
+      },
+      {
+        q: "Why is evaluation important in the generative AI project lifecycle?",
+        options: [
+          "To ensure outputs are relevant, accurate, and safe",
+          "To make the model run faster",
+          "To reduce the number of parameters",
+          "To avoid using prompts"
+        ],
+        answer: 0
+      },
+      {
+        q: "What is a 'prompt' in the context of LLMs?",
+        options: [
+          "A set of training data",
+          "A piece of text or instruction given to the model to generate a response",
+          "A type of neural network",
+          "A data labeling tool"
+        ],
+        answer: 1
+      },
+      {
+        q: "Which of the following is a limitation of LLMs?",
+        options: [
+          "They may generate plausible but incorrect information",
+          "They can only process images",
+          "They do not require any data to train",
+          "They always cite their sources"
+        ],
+        answer: 0
+      },
+      {
+        q: "What is 'fine-tuning' in the context of LLMs?",
+        options: [
+          "Training a model from scratch",
+          "Adapting a pre-trained model to a specific task or dataset",
+          "Evaluating model outputs",
+          "Compressing the model"
+        ],
+        answer: 1
+      },
+      {
+        q: "Which of the following is a recommended way to improve LLM output quality?",
+        options: [
+          "Provide clear instructions and examples in the prompt",
+          "Use random prompts",
+          "Avoid specifying output format",
+          "Only use short prompts"
+        ],
+        answer: 0
+      },
+      {
+        q: "What is 'hallucination' in LLMs?",
+        options: [
+          "When the model generates information that is not factual or grounded in data",
+          "When the model runs out of memory",
+          "When the model is fine-tuned",
+          "When the model is used for image generation"
+        ],
+        answer: 0
+      }
+    ];
+
+    const form = document.getElementById('quizForm');
+    // Shuffle and select 10 random questions
+    function getRandomQuestions(arr, n) {
+      const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, n);
+    }
+    const selectedQuestions = getRandomQuestions(questions, 10);
+    selectedQuestions.forEach((q, idx) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+        '<div class="options">' +
+        q.options.map((opt, i) =>
+          `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+        ).join('') +
+        '</div>';
+      form.appendChild(div);
+    });
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'button';
+    submitBtn.textContent = 'Submit';
+    form.appendChild(submitBtn);
+
+    submitBtn.onclick = function() {
+      let score = 0;
+      for (let i = 0; i < selectedQuestions.length; i++) {
+        const selected = form.querySelector(`input[name="q${i}"]:checked`);
+        if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+          score++;
+        }
+      }
+      const percent = (score / selectedQuestions.length) * 100;
+      const resultDiv = document.getElementById('result');
+      if (percent >= 80) {
+        resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+        resultDiv.style.color = '#49d17a';
+      } else {
+        resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+        resultDiv.style.color = '#ffd166';
+        document.getElementById('retryBtn').onclick = function() { location.reload(); };
+      }
+    };
+  </script>
+</body>
+</html>

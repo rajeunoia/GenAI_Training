@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 3 Evaluation</title>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 3 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+    {
+      q: "What is the main purpose of using tools in LLM agents?",
+      options: [
+        "To extend the agent's capabilities beyond language generation",
+        "To reduce the size of the model",
+        "To speed up training",
+        "To visualize data"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which database is commonly used for quick prototyping in GenAI projects?",
+      options: [
+        "SQLite",
+        "MongoDB",
+        "Oracle",
+        "Cassandra"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the role of the SQLDatabase chain in LangChain?",
+      options: [
+        "To enable LLMs to interact with SQL databases via natural language",
+        "To train neural networks",
+        "To store embeddings",
+        "To generate prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a benefit of combining DB and RAG tools in a single agent?",
+      options: [
+        "The agent can answer both structured (SQL) and unstructured (RAG) queries",
+        "It reduces the need for prompts",
+        "It eliminates the need for embeddings",
+        "It only works for image data"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a JSON-schema output in the context of LLM agents?",
+      options: [
+        "A structured format for the agent's response",
+        "A database schema",
+        "A type of neural network",
+        "A prompt template"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key challenge when allowing LLMs to execute SQL queries?",
+      options: [
+        "Ensuring queries are safe and do not modify or delete data unintentionally",
+        "Speeding up query execution",
+        "Reducing model size",
+        "Improving image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main function of a retriever in a DB+RAG agent?",
+      options: [
+        "To fetch relevant documents or data chunks",
+        "To train the LLM",
+        "To store SQL queries",
+        "To visualize results"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for error handling in LLM agents?",
+      options: [
+        "Return clear error messages and handle exceptions gracefully",
+        "Ignore all errors",
+        "Only log errors to a file",
+        "Never validate user input"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a 'Data Q&A Agent' as described in Week 3?",
+      options: [
+        "An agent that routes questions to either a database or knowledge base depending on the query",
+        "A tool for image classification",
+        "A prompt engineering tool",
+        "A web server"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a risk when allowing LLMs to generate SQL queries?",
+      options: [
+        "SQL injection or unsafe queries",
+        "Faster query execution",
+        "Improved image generation",
+        "Better prompt engineering"
+      ],
+      answer: 0
+    },
+    // 10 more conceptual questions for Week 3
+    {
+      q: "What is the main advantage of using natural language to SQL tools?",
+      options: [
+        "They allow non-technical users to query databases",
+        "They speed up model training",
+        "They reduce database size",
+        "They generate images"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a common output format for LLM agent responses?",
+      options: [
+        "Structured JSON",
+        "Raw SQL only",
+        "Binary data",
+        "HTML only"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a key benefit of using LangChain for database integration?",
+      options: [
+        "It provides abstractions for connecting LLMs to SQL databases",
+        "It trains neural networks",
+        "It visualizes embeddings",
+        "It generates web pages"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a limitation of LLM-based SQL agents?",
+      options: [
+        "They may generate incorrect or inefficient queries",
+        "They always require internet access",
+        "They cannot use prompt templates",
+        "They only work for images"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the purpose of combining RAG and SQL tools in a single agent?",
+      options: [
+        "To answer both unstructured and structured data questions",
+        "To speed up LLM inference",
+        "To reduce database size",
+        "To generate images"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a recommended way to validate SQL queries generated by LLMs?",
+      options: [
+        "Use parameterized queries and restrict permissions",
+        "Allow all queries without validation",
+        "Only use SELECT *",
+        "Never log errors"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a common use case for a DB+RAG agent?",
+      options: [
+        "Answering business questions that require both factual data and contextual information",
+        "Generating images",
+        "Training neural networks",
+        "Serving web pages"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a feature of LangChain's SQLDatabase chain?",
+      options: [
+        "Natural language to SQL conversion",
+        "Direct database schema modification",
+        "Query execution",
+        "Result formatting"
+      ],
+      answer: 1
+    },
+    {
+      q: "What is a best practice for handling user input in LLM agents that generate SQL?",
+      options: [
+        "Sanitize and validate all user input",
+        "Trust all input",
+        "Ignore input format",
+        "Only use input for prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following best describes the flow of a DB+RAG agent?",
+      options: [
+        "User query → Agent decides route (DB or RAG) → Executes tool → Returns answer",
+        "User query → LLM → Retriever → Answer",
+        "User query → Web server → Retriever → LLM",
+        "User query → Vector DB → LLM → Retriever"
+      ],
+      answer: 0
+    }
+  ];
+
+  const form = document.getElementById('quizForm');
+  // Shuffle and select 10 random questions
+  function getRandomQuestions(arr, n) {
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
+  const selectedQuestions = getRandomQuestions(questions, 10);
+  selectedQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+      '<div class="options">' +
+      q.options.map((opt, i) =>
+        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+      ).join('') +
+      '</div>';
+    form.appendChild(div);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'button';
+  submitBtn.textContent = 'Submit';
+  form.appendChild(submitBtn);
+
+  submitBtn.onclick = function() {
+    let score = 0;
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const selected = form.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        score++;
+      }
+    }
+    const percent = (score / selectedQuestions.length) * 100;
+    const resultDiv = document.getElementById('result');
+    if (percent >= 80) {
+      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+      resultDiv.style.color = '#49d17a';
+    } else {
+      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+      resultDiv.style.color = '#ffd166';
+      document.getElementById('retryBtn').onclick = function() { location.reload(); };
+    }
+  };
+  </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenAI Week 4 Evaluation</title>
+</head>
+<body>
+  <div class="container">
+    <h1>GenAI Week 4 Evaluation</h1>
+    <form id="quizForm">
+      <!-- Questions will be injected here -->
+    </form>
+    <div id="result" class="result"></div>
+  </div>
+  <style>
+    body { background: #0b1020; color: #e9eefc; font-family: Inter, Arial, sans-serif; }
+    .container { max-width: 700px; margin: 2rem auto; background: #11172b; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 12px #0002; }
+    h1 { color: #ffd166; }
+    .question { margin-bottom: 1.5rem; }
+    .options label { display: block; margin-bottom: .3rem; cursor: pointer; }
+    button { background: #7aa2ff; color: #fff; border: none; padding: .7rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #49d17a; }
+    .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
+  </style>
+  <script>
+  // 20 conceptual questions, only 10 will be shown per attempt
+  const questions = [
+    {
+      q: "What is an agent in the context of GenAI applications?",
+      options: [
+        "A system that can autonomously perform tasks using LLMs and tools",
+        "A database schema",
+        "A type of neural network",
+        "A web server"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a multi-agent system?",
+      options: [
+        "A system where multiple agents collaborate or interact to solve complex tasks",
+        "A single LLM running alone",
+        "A database with multiple tables",
+        "A web application"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which framework is highlighted for building multi-agent systems in Week 4?",
+      options: [
+        "CrewAI",
+        "TensorFlow",
+        "Flask",
+        "Pandas"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a key benefit of using multiple tools in a LangChain agent?",
+      options: [
+        "The agent can solve a wider range of tasks by combining capabilities",
+        "It reduces the need for prompts",
+        "It eliminates the need for LLMs",
+        "It only works for images"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the purpose of evaluation in GenAI agent systems?",
+      options: [
+        "To measure performance, correctness, and reliability of agents",
+        "To train neural networks",
+        "To store embeddings",
+        "To generate prompts"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for evaluating AI agents?",
+      options: [
+        "Use a golden set of test cases and measure relevant metrics",
+        "Only test with random queries",
+        "Never log errors",
+        "Ignore user feedback"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a 'Plan-&-Execute' agent pattern?",
+      options: [
+        "An agent that plans a sequence of tasks and executes them using tools",
+        "A database schema",
+        "A type of neural network",
+        "A web server"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a key challenge in multi-agent systems?",
+      options: [
+        "Coordinating communication and task delegation between agents",
+        "Reducing model size",
+        "Improving image generation",
+        "Speeding up database queries"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a 'golden set' in the context of agent evaluation?",
+      options: [
+        "A curated set of test cases with known correct answers",
+        "A set of random queries",
+        "A database schema",
+        "A prompt template"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a benefit of tracing in agent systems?",
+      options: [
+        "It helps debug, monitor, and improve agent behavior",
+        "It trains neural networks",
+        "It stores embeddings",
+        "It generates prompts"
+      ],
+      answer: 0
+    },
+    // 10 more conceptual questions for Week 4
+    {
+      q: "What is a 'Research Agent' as described in Week 4?",
+      options: [
+        "An agent that plans tasks, calls tools, and returns a structured brief with references",
+        "A tool for image classification",
+        "A prompt engineering tool",
+        "A web server"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a limitation of multi-agent systems?",
+      options: [
+        "Increased complexity in coordination and communication",
+        "They always require internet access",
+        "They cannot use prompt templates",
+        "They only work for images"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a key feature of CrewAI?",
+      options: [
+        "Orchestrating multiple agents and tools for collaborative tasks",
+        "Training neural networks",
+        "Visualizing embeddings",
+        "Generating web pages"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a recommended way to evaluate agent performance?",
+      options: [
+        "Use metrics like accuracy, relevance, and response time",
+        "Only use random prompts",
+        "Ignore output format",
+        "Never use examples"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is a limitation of using only a single tool in an agent?",
+      options: [
+        "Limited problem-solving capability compared to multi-tool agents",
+        "Faster execution",
+        "Better image generation",
+        "Improved prompt engineering"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is a best practice for agent communication?",
+      options: [
+        "Define clear protocols and message formats",
+        "Allow all agents to communicate freely without structure",
+        "Never log communication",
+        "Ignore errors"
+      ],
+      answer: 0
+    },
+    {
+      q: "What is the main advantage of using evaluation frameworks for agents?",
+      options: [
+        "Standardized and repeatable assessment of agent performance",
+        "Faster model training",
+        "Reduced database size",
+        "Improved image generation"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following is NOT a feature of CrewAI?",
+      options: [
+        "Multi-agent orchestration",
+        "Web page rendering",
+        "Tool integration",
+        "Task delegation"
+      ],
+      answer: 1
+    },
+    {
+      q: "What is a best practice for handling errors in agent systems?",
+      options: [
+        "Log errors and provide informative feedback",
+        "Ignore all errors",
+        "Only log errors to a file",
+        "Never validate user input"
+      ],
+      answer: 0
+    },
+    {
+      q: "Which of the following best describes the flow of a multi-agent system?",
+      options: [
+        "User query → Coordinator agent → Task delegation to sub-agents → Aggregation of results → Final answer",
+        "User query → LLM → Retriever → Answer",
+        "User query → Web server → Retriever → LLM",
+        "User query → Vector DB → LLM → Retriever"
+      ],
+      answer: 0
+    }
+  ];
+
+  const form = document.getElementById('quizForm');
+  // Shuffle and select 10 random questions
+  function getRandomQuestions(arr, n) {
+    const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, n);
+  }
+  const selectedQuestions = getRandomQuestions(questions, 10);
+  selectedQuestions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `<div><strong>Q${idx+1}:</strong> ${q.q}</div>` +
+      '<div class="options">' +
+      q.options.map((opt, i) =>
+        `<label><input type="radio" name="q${idx}" value="${i}"> ${opt}</label>`
+      ).join('') +
+      '</div>';
+    form.appendChild(div);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.type = 'button';
+  submitBtn.textContent = 'Submit';
+  form.appendChild(submitBtn);
+
+  submitBtn.onclick = function() {
+    let score = 0;
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      const selected = form.querySelector(`input[name="q${i}"]:checked`);
+      if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        score++;
+      }
+    }
+    const percent = (score / selectedQuestions.length) * 100;
+    const resultDiv = document.getElementById('result');
+    if (percent >= 80) {
+      resultDiv.textContent = `Pass! You scored ${score}/10 (${percent}%)`;
+      resultDiv.style.color = '#49d17a';
+    } else {
+      resultDiv.innerHTML = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+      resultDiv.style.color = '#ffd166';
+      document.getElementById('retryBtn').onclick = function() { location.reload(); };
+    }
+  };
+  </script>
+</body>
+</html>
