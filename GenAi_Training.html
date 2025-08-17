@@ -142,8 +142,73 @@
         <div class="pill">Program</div>
         <h1>GenAI Engineer — 6-Week Training Plan</h1>
         <div style="margin-bottom:1rem;">
-          <a href="how_to_take_training.html" style="display:inline-block;background:#ffd166;color:#0b1020;font-weight:bold;padding:0.5rem 1.2rem;border-radius:8px;font-size:1.08rem;text-decoration:none;box-shadow:0 2px 8px 0 rgba(0,0,0,0.08);border:2px solid #ffd166;">How to Take the Training &rarr;</a>
+          <a href="#" id="howToBtn" style="display:inline-block;background:#ffd166;color:#0b1020;font-weight:bold;padding:0.5rem 1.2rem;border-radius:8px;font-size:1.08rem;text-decoration:none;box-shadow:0 2px 8px 0 rgba(0,0,0,0.08);border:2px solid #ffd166;">How to Take the Training &rarr;</a>
         </div>
+        <!-- How To Take Training Modal -->
+        <div id="howToModal" style="display:none;position:fixed;z-index:1000;top:0;left:0;width:100vw;height:100vh;background:rgba(11,16,32,0.92);backdrop-filter:blur(2px);overflow:auto;">
+          <div style="max-width:700px;margin:3rem auto 2rem;background:#11172b;padding:2rem 1.5rem 2.5rem;border-radius:16px;box-shadow:0 2px 16px 0 rgba(0,0,0,0.18);position:relative;">
+            <button id="closeHowTo" style="position:absolute;top:1.2rem;right:1.2rem;background:#ffd166;color:#0b1020;font-weight:bold;border:none;border-radius:50%;width:2.2rem;height:2.2rem;font-size:1.3rem;cursor:pointer;">&times;</button>
+            <h1 style="font-size:2rem;margin-bottom:0.5rem;">How to Take the GenAI Training</h1>
+            <p>This page will guide you through the steps to successfully complete the GenAI Engineer 6-week training program.</p>
+            <h2 style="color:#ffd166;font-size:1.2rem;margin-top:2rem;">Step-by-Step Guide</h2>
+            <ol style="margin:0.5rem 0 1.2rem 1.5rem;">
+              <li><strong>Review the weekly plan</strong> on the main page to understand the structure and outcomes for each week.</li>
+              <li><strong>Complete all assigned courses and watch the recommended videos</strong> for each week.</li>
+              <li><strong>Work through the hands-on labs</strong> to gain practical experience with the tools and frameworks.</li>
+              <li><strong>Finish the mini-project</strong> for each week and push your code to a GitHub repository you create in your own account.</li>
+              <li><strong>Take the evaluation quiz</strong> at the end of each week to assess your understanding. You must score at least 80% to pass.</li>
+              <li>Repeat the above steps for all 6 weeks. At the end, complete the capstone project as described in the main plan.</li>
+            </ol>
+            <h2 style="color:#ffd166;font-size:1.2rem;margin-top:2rem;">Best Practices</h2>
+            <ul style="margin:0.5rem 0 1.2rem 1.5rem;">
+              <li>Keep your GitHub repository updated with your weekly mini-projects and capstone work.</li>
+              <li>Document your code and learning journey in your repo's README.</li>
+              <li>Reach out for support if you get stuck or need clarification.</li>
+            </ul>
+            <h2 style="color:#ffd166;font-size:1.2rem;margin-top:2rem;">Support</h2>
+            <div style="background:#222b44;border:1px solid #7aa2ff;border-radius:10px;padding:1.2rem 1.5rem;margin-top:1.2rem;max-width:420px;">
+              <p style="margin-bottom:1.2rem;">If you need help, you can reach out to the support team at <span style="color:#ffd166;font-weight:bold;">support@genai-training.com</span> or fill out the form below:</p>
+              <form id="supportFormModal" autocomplete="off" style="display:flex;flex-direction:column;gap:0.7rem;">
+                <label for="nameModal" style="margin-bottom:0.2rem;">Your Name</label>
+                <input type="text" id="nameModal" name="name" required style="padding:0.5rem;border-radius:6px;border:1px solid #7aa2ff;background:#0b1020;color:#e9eefc;font-size:1rem;" />
+                <label for="emailModal" style="margin-bottom:0.2rem;">Your Email</label>
+                <input type="email" id="emailModal" name="email" required style="padding:0.5rem;border-radius:6px;border:1px solid #7aa2ff;background:#0b1020;color:#e9eefc;font-size:1rem;" />
+                <label for="messageModal" style="margin-bottom:0.2rem;">How can we help you?</label>
+                <textarea id="messageModal" name="message" rows="4" required style="padding:0.5rem;border-radius:6px;border:1px solid #7aa2ff;background:#0b1020;color:#e9eefc;font-size:1rem;"></textarea>
+                <button type="submit" style="background:#7aa2ff;color:#fff;border:none;padding:0.6rem 1.5rem;border-radius:6px;font-size:1rem;font-weight:bold;cursor:pointer;margin-top:0.5rem;transition:background 0.2s;">Submit</button>
+              </form>
+              <div id="formSuccessModal" style="color:#49d17a;margin-top:1rem;display:none;">Thank you! Your message has been sent to support@genai-training.com.</div>
+            </div>
+          </div>
+        </div>
+    <script>
+      // Modal logic for How to Take the Training
+      const howToBtn = document.getElementById('howToBtn');
+      const howToModal = document.getElementById('howToModal');
+      const closeHowTo = document.getElementById('closeHowTo');
+      howToBtn.onclick = function(e) {
+        e.preventDefault();
+        howToModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+      };
+      closeHowTo.onclick = function() {
+        howToModal.style.display = 'none';
+        document.body.style.overflow = '';
+      };
+      // Support form in modal
+      document.getElementById('supportFormModal').onsubmit = function(e) {
+        e.preventDefault();
+        document.getElementById('formSuccessModal').style.display = 'block';
+        document.getElementById('supportFormModal').reset();
+      };
+      // Close modal on Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && howToModal.style.display === 'block') {
+          howToModal.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
+    </script>
         <ul class="meta" style="margin:0.5rem 0 0 0.5rem;list-style:disc inside;">
           <li>Team size: 6–8 freshers</li>
           <li>Stack: Ollama → Bedrock → Azure OpenAI</li>
