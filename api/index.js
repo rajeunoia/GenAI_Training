@@ -66,31 +66,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve the main HTML files
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
-
+// Dashboard route (needs authentication)
 app.get('/dashboard', (req, res) => {
   if (req.isAuthenticated()) {
     res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
   } else {
     res.redirect('/');
-  }
-});
-
-// Serve training content
-app.get('/training', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'GenAi_Training.html'));
-});
-
-// Serve evaluation pages
-app.get('/evaluation/:week', (req, res) => {
-  const week = req.params.week;
-  if (week >= 1 && week <= 6) {
-    res.sendFile(path.join(__dirname, '..', `evaluation/genai_week${week}_evaluation.html`));
-  } else {
-    res.status(404).send('Evaluation not found');
   }
 });
 

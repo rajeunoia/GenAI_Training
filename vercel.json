@@ -4,6 +4,14 @@
     {
       "src": "api/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "evaluation/*.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -12,8 +20,12 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
       "src": "/dashboard",
-      "dest": "/dashboard.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/training",
@@ -29,7 +41,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/api/index.js"
     }
   ],
   "env": {
