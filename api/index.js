@@ -23,7 +23,7 @@ connectDB();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? true  // Allow all origins in production for now
+    ? ['https://turingdata-genai-training.vercel.app']
     : ['http://localhost:3000'],
   credentials: true
 }));
