@@ -88,4 +88,22 @@ router.get('/status', (req, res) => {
   }
 });
 
+// Debug endpoint to check OAuth configuration
+router.get('/debug', (req, res) => {
+  const config = {
+    environment: process.env.NODE_ENV,
+    hasClientId: !!process.env.GOOGLE_CLIENT_ID,
+    hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    hasSessionSecret: !!process.env.SESSION_SECRET,
+    clientIdPrefix: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Missing',
+    callbackURL: process.env.NODE_ENV === 'production' 
+      ? "https://turingdata-genai-training.vercel.app/api/auth/google/callback"
+      : "/api/auth/google/callback",
+    timestamp: new Date().toISOString()
+  };
+  
+  console.log('OAuth Debug Info:', config);
+  res.json(config);
+});
+
 module.exports = router;
