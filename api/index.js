@@ -17,6 +17,16 @@ const testRoutes = require('./routes/test');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Log environment variables (without secrets)
+console.log('🚀 Server starting with environment:', {
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: PORT,
+  MONGODB_URI: process.env.MONGODB_URI ? 'Set' : 'Missing',
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ? 'Set' : 'Missing',
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'Set' : 'Missing',
+  SESSION_SECRET: process.env.SESSION_SECRET ? 'Set' : 'Missing'
+});
+
 // Connect to MongoDB
 connectDB();
 
@@ -38,11 +48,18 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production', 
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Important for cross-origin in production
   }
 }));
+
+console.log('Session configured with:', {
+  nodeEnv: process.env.NODE_ENV,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+});
 
 // Passport middleware
 app.use(passport.initialize());
