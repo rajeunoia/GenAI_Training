@@ -23,7 +23,7 @@ connectDB();
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-vercel-domain.vercel.app'] 
+    ? true  // Allow all origins in production for now
     : ['http://localhost:3000'],
   credentials: true
 }));
