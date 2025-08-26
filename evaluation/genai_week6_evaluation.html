@@ -8,6 +8,10 @@
 <body>
   <div class="container">
     <h1>GenAI Week 6 Evaluation</h1>
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,.1);">
+      <a href="/dashboard" style="background: #7aa2ff; color: #fff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; margin-right: 0.5rem;">← Back to Dashboard</a>
+      <a href="/training" style="background: transparent; color: #7aa2ff; text-decoration: none; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.9rem; border: 1px solid #7aa2ff;">Training Content</a>
+    </div>
     <form id="quizForm">
       <!-- Questions will be injected here -->
     </form>
@@ -24,7 +28,9 @@
     .result { font-size: 1.2rem; margin-top: 2rem; font-weight: bold; }
   </style>
   <script>
-  // 20 conceptual questions, only 10 will be shown per attempt
+  // Track start time for quiz duration
+  const startTime = Date.now();
+    // 20 conceptual questions, only 10 will be shown per attempt
   const questions = [
     {
       q: "What is the main goal of the Week 6 capstone project?",
@@ -267,16 +273,23 @@
   submitBtn.textContent = 'Submit';
   form.appendChild(submitBtn);
 
-    submitBtn.onclick = function() {
+        submitBtn.onclick = async function() {
       // Disable submit button and all radio inputs after first submission
       submitBtn.disabled = true;
       const radios = form.querySelectorAll('input[type="radio"]');
       radios.forEach(r => r.disabled = true);
+      
+      // Calculate score and collect responses
       let score = 0;
+      const responses = [];
+      
       for (let i = 0; i < selectedQuestions.length; i++) {
-        const selected = form.querySelector(`input[name=\"q${i}\"]:checked`);
+        const selected = form.querySelector(`input[name="q${i}"]:checked`);
         const feedbackDiv = document.getElementById(`feedback${i}`);
-        if (selected && parseInt(selected.value) === selectedQuestions[i].answer) {
+        const selectedAnswer = selected ? parseInt(selected.value) : -1;
+        const isCorrect = selectedAnswer === selectedQuestions[i].answer;
+        
+        if (isCorrect) {
           score++;
           feedbackDiv.textContent = 'Correct!';
           feedbackDiv.style.color = '#49d17a';
@@ -284,21 +297,92 @@
           feedbackDiv.textContent = `Incorrect. Correct answer: ${selectedQuestions[i].options[selectedQuestions[i].answer]}`;
           feedbackDiv.style.color = '#ffd166';
         }
+        
+        responses.push({
+          selectedAnswer: selectedAnswer
+        });
       }
+      
       const percent = (score / selectedQuestions.length) * 100;
       const resultDiv = document.getElementById('result');
+      
+      // Try to submit to API
+      let apiSubmissionSuccess = false;
+      let apiResponse = null;
+      
+      try {
+        console.log('Submitting quiz to API...', {
+          score: percent,
+          responses: responses.length,
+          timeSpent: Math.round((Date.now() - startTime) / 1000),
+          questionsUsed: selectedQuestions.length,
+          detailedResponses: responses.map((r, i) => ({
+            question: selectedQuestions[i].q.substring(0, 50) + '...',
+            selectedAnswer: r.selectedAnswer,
+            correctAnswer: selectedQuestions[i].answer,
+            isCorrect: r.selectedAnswer === selectedQuestions[i].answer
+          }))
+        });
+        
+        const submitResponse = await fetch('/api/quiz/6/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            responses: responses,
+            timeSpent: Math.round((Date.now() - startTime) / 1000) || 0,  // Convert to seconds
+            questionsShown: selectedQuestions.map((q, index) => ({
+              questionIndex: index,
+              question: q.q,
+              options: q.options,
+              correctAnswer: q.answer
+            }))
+          })
+        });
+
+        if (submitResponse.ok) {
+          apiResponse = await submitResponse.json();
+          apiSubmissionSuccess = true;
+          console.log('✅ Quiz submitted successfully to API:', apiResponse);
+        } else {
+          const errorData = await submitResponse.text();
+          console.error('❌ API submission failed:', submitResponse.status, errorData);
+          alert(`Warning: Quiz results not saved to your account. Status: ${submitResponse.status}`);
+        }
+      } catch (error) {
+        console.error('❌ Error submitting quiz to API:', error);
+        alert('Warning: Quiz results could not be saved to your account. Please check your connection and try again.');
+      }
+      
+      // Show results
       let resultHtml = '';
-      if (percent >= 80) {
-        resultHtml = `Pass! You scored ${score}/10 (${percent}%)`;
+      if (percent >= 70) {
+        resultHtml = `<span style="color: #49d17a;">✅ Pass!</span> You scored ${score}/10 (${percent}%)`;
         resultDiv.style.color = '#49d17a';
       } else {
-        resultHtml = `Fail. You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
+        resultHtml = `<span style="color: #ffd166;">❌ Fail.</span> You scored ${score}/10 (${percent}%)<br><button id='retryBtn' style='margin-top:1rem;background:#ffd166;color:#0b1020;'>Retry</button>`;
         resultDiv.style.color = '#ffd166';
       }
-      resultHtml += `<br><button id='mainBtn' style='margin-top:1rem;background:#7aa2ff;color:#fff;'>Back to Main Page</button>`;
+      
+      // Add API submission status
+      if (apiSubmissionSuccess) {
+        resultHtml += `<br><small style="color: #49d17a;">✅ Results saved to your dashboard</small>`;
+      } else {
+        resultHtml += `<br><small style="color: #ffd166;">⚠️ Results not saved - please sign in</small>`;
+      }
+      
+      resultHtml += `<br><button id='dashboardBtn' style='margin-top:1rem;background:#7aa2ff;color:#fff;margin-right:0.5rem;'>Back to Dashboard</button>`;
+      resultHtml += `<button id='mainBtn' style='margin-top:1rem;background:transparent;color:#7aa2ff;border:1px solid #7aa2ff;'>Training Content</button>`;
       resultDiv.innerHTML = resultHtml;
-      if (percent < 80) {
+      
+      if (percent < 70) {
         document.getElementById('retryBtn').onclick = function() { location.reload(); };
+      }
+      document.getElementById('dashboardBtn').onclick = function() { window.location.href = '/dashboard'; };
+      document.getElementById('mainBtn').onclick = function() { window.location.href = '/training'; };
+    };
       }
       document.getElementById('mainBtn').onclick = function() { window.location.href = '../GenAi_Training.html'; };
     };

@@ -1,0 +1,37 @@
+{
+  "name": "genai-training-platform",
+  "version": "1.0.0",
+  "description": "GenAI Engineer 6-Week Training Platform with user authentication and progress tracking",
+  "main": "api/index.js",
+  "scripts": {
+    "dev": "node api/index.js",
+    "start": "node api/index.js",
+    "build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.0.3",
+    "node-fetch": "^2.7.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "genai",
+    "training",
+    "education",
+    "authentication",
+    "mongodb"
+  ],
+  "author": "GenAI Training Team",
+  "license": "MIT"
+}

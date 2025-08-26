@@ -1,11 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta http-equiv="refresh" content="0; url=GenAi_Training.html" />
-  <title>Redirecting...</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GenAI Engineer Training - Sign In</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #11172b;
+      --ink: #e9eefc;
+      --muted: #98a3c7;
+      --accent: #7aa2ff;
+      --ok: #49d17a;
+      --warn: #ffd166;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      height: 100vh;
+    }
+    
+    .container {
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .auth-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 3rem;
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .logo {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    
+    .google-signin-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s;
+      margin-bottom: 2rem;
+    }
+    
+    .google-signin-btn:hover {
+      background: #3367d6;
+    }
+    
+    .google-icon {
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .features {
+      text-align: left;
+      margin-top: 2rem;
+    }
+    
+    .features h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .feature-list {
+      list-style: none;
+    }
+    
+    .feature-list li {
+      padding: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .feature-list li::before {
+      content: "✓";
+      color: var(--ok);
+      font-weight: bold;
+    }
+    
+    .guest-link {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+    
+    .guest-link a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    .guest-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+    }
+    
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin: 0.5rem;
+      transition: background-color 0.2s;
+    }
+    
+    .btn:hover {
+      background: #5a8cff;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--ink);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.05);
+    }
+  </style>
 </head>
 <body>
-  <!-- Optional: Message for users without auto-redirect -->
-  <p>If you are not redirected automatically, <a href="GenAi_Training.html">click here</a>.</p>
+  <div class="container">
+    <div class="auth-card">
+      <!-- Not authenticated view -->
+      <div id="guestView">
+        <div class="logo">GenAI Engineer Training</div>
+        <p class="subtitle">6-Week Professional Development Program</p>
+        
+        <a href="/api/auth/google" class="google-signin-btn">
+          <div class="google-icon">G</div>
+          Sign in with Google
+        </a>
+        
+        <div class="features">
+          <h3>What you'll get:</h3>
+          <ul class="feature-list">
+            <li>Track your progress through all 6 weeks</li>
+            <li>Save quiz scores and attempts</li>
+            <li>Personal learning dashboard</li>
+            <li>Resume training from where you left off</li>
+          </ul>
+        </div>
+        
+        <div class="guest-link">
+          <p>Want to browse without signing in? <a href="/training">View training content</a></p>
+        </div>
+      </div>
+      
+      <!-- Authenticated view -->
+      <div id="userView" class="hidden">
+        <div class="logo">Welcome back!</div>
+        
+        <div class="user-info">
+          <img id="userAvatar" class="user-avatar" alt="User Avatar" />
+          <div>
+            <div id="userName" style="font-size: 1.2rem; font-weight: 600;"></div>
+            <div id="userEmail" style="color: var(--muted);"></div>
+          </div>
+        </div>
+        
+        <a href="/dashboard" class="btn">Go to Dashboard</a>
+        <a href="/training" class="btn btn-secondary">Training Content</a>
+        
+        <div class="guest-link">
+          <button id="logoutBtn" class="btn btn-secondary">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication status on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/auth/status', {
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.authenticated) {
+          showUserView(data.user);
+        } else {
+          showGuestView();
+        }
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+        showGuestView();
+      }
+    });
+
+    function showUserView(user) {
+      document.getElementById('guestView').classList.add('hidden');
+      document.getElementById('userView').classList.remove('hidden');
+      
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').src = user.avatar;
+    }
+
+    function showGuestView() {
+      document.getElementById('guestView').classList.remove('hidden');
+      document.getElementById('userView').classList.add('hidden');
+    }
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          showGuestView();
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        showGuestView();
+      }
+    });
+  </script>
 </body>
 </html>

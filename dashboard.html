@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Learning Dashboard - GenAI Training</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #11172b;
+      --ink: #e9eefc;
+      --muted: #98a3c7;
+      --accent: #7aa2ff;
+      --ok: #49d17a;
+      --warn: #ffd166;
+      --error: #ff6b6b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+    }
+    
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      padding: 1rem 0;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+    }
+    
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+    
+    .btn:hover {
+      background: #5a8cff;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--ink);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,.05);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .welcome {
+      background: linear-gradient(135deg, rgba(122,162,255,.15), rgba(73,209,122,.08));
+      border: 1px solid rgba(122,162,255,.25);
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    
+    .welcome h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+    }
+    
+    .progress-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 1.5rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .week-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+    }
+    
+    .week-card.completed {
+      border-color: var(--ok);
+    }
+    
+    .week-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    
+    .week-title {
+      font-size: 1.1rem;
+      color: var(--warn);
+      margin: 0;
+    }
+    
+    .week-status {
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .status-completed {
+      background: rgba(73,209,122,.2);
+      color: var(--ok);
+    }
+    
+    .status-in-progress {
+      background: rgba(255,209,102,.2);
+      color: var(--warn);
+    }
+    
+    .status-not-started {
+      background: rgba(152,163,199,.2);
+      color: var(--muted);
+    }
+    
+    .week-score {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0.5rem 0;
+    }
+    
+    .score-good {
+      color: var(--ok);
+    }
+    
+    .score-okay {
+      color: var(--warn);
+    }
+    
+    .score-poor {
+      color: var(--error);
+    }
+    
+    .week-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+    }
+    
+    .error {
+      background: rgba(255,107,107,.1);
+      border: 1px solid rgba(255,107,107,.3);
+      color: var(--error);
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">GenAI Training</div>
+      <div class="user-menu">
+        <img id="userAvatar" class="user-avatar" alt="User Avatar" />
+        <span id="userName">Loading...</span>
+        <a href="/training" class="btn btn-secondary">Training Content</a>
+        <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="loadingScreen" class="loading">
+      Loading your progress...
+    </div>
+
+    <div id="errorScreen" class="error hidden">
+      <p>Failed to load your progress. Please try refreshing the page.</p>
+    </div>
+
+    <div id="dashboardContent" class="hidden">
+      <div class="welcome">
+        <h1>Welcome back, <span id="welcomeName">Student</span>!</h1>
+        <p>Continue your GenAI engineering journey. Track your progress through each week's content and evaluations.</p>
+      </div>
+
+      <div class="progress-overview">
+        <div class="stat-card">
+          <div id="completedWeeks" class="stat-value">0</div>
+          <div class="stat-label">Weeks Completed</div>
+        </div>
+        <div class="stat-card">
+          <div id="averageScore" class="stat-value">0%</div>
+          <div class="stat-label">Average Score</div>
+        </div>
+        <div class="stat-card">
+          <div id="overallProgress" class="stat-value">0%</div>
+          <div class="stat-label">Overall Progress</div>
+        </div>
+        <div class="stat-card">
+          <div id="totalAttempts" class="stat-value">0</div>
+          <div class="stat-label">Total Quiz Attempts</div>
+        </div>
+      </div>
+
+      <div id="weeksGrid" class="weeks-grid">
+        <!-- Week cards will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await checkAuthStatus();
+        if (currentUser) {
+          await loadDashboardData();
+        }
+      } catch (error) {
+        showError();
+      }
+    });
+
+    async function checkAuthStatus() {
+      const response = await fetch('/api/auth/status', {
+        credentials: 'include'
+      });
+      
+      const data = await response.json();
+      
+      if (data.authenticated) {
+        currentUser = data.user;
+        document.getElementById('userName').textContent = data.user.name;
+        document.getElementById('userAvatar').src = data.user.avatar;
+        document.getElementById('welcomeName').textContent = data.user.name.split(' ')[0];
+      } else {
+        window.location.href = '/';
+      }
+    }
+
+    async function loadDashboardData() {
+      try {
+        const response = await fetch('/api/user/progress', {
+          credentials: 'include'
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch progress');
+        
+        const data = await response.json();
+        
+        // Update overview stats
+        document.getElementById('completedWeeks').textContent = data.overallStats.completedWeeks;
+        document.getElementById('averageScore').textContent = data.overallStats.averageScore + '%';
+        document.getElementById('overallProgress').textContent = data.overallStats.completionPercentage + '%';
+        document.getElementById('totalAttempts').textContent = data.overallStats.totalAttempts;
+        
+        // Populate weeks grid
+        populateWeeksGrid(data.weeklyProgress);
+        
+        // Show dashboard
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('dashboardContent').classList.remove('hidden');
+        
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+        showError();
+      }
+    }
+
+    function populateWeeksGrid(weeklyProgress) {
+      const grid = document.getElementById('weeksGrid');
+      grid.innerHTML = '';
+      
+      weeklyProgress.forEach(week => {
+        const weekCard = createWeekCard(week);
+        grid.appendChild(weekCard);
+      });
+    }
+
+    function createWeekCard(week) {
+      const card = document.createElement('div');
+      card.className = `week-card ${week.completed ? 'completed' : ''}`;
+      
+      const status = week.completed ? 'completed' : (week.totalAttempts > 0 ? 'in-progress' : 'not-started');
+      const statusLabel = week.completed ? 'Completed' : (week.totalAttempts > 0 ? 'In Progress' : 'Not Started');
+      
+      const scoreClass = week.bestScore >= 80 ? 'score-good' : (week.bestScore >= 60 ? 'score-okay' : 'score-poor');
+      
+      // Last attempt details
+      let lastAttemptInfo = '';
+      if (week.lastAttempt) {
+        const lastAttempt = week.lastAttempt;
+        const attemptDate = new Date(lastAttempt.submittedAt).toLocaleDateString();
+        const attemptTime = new Date(lastAttempt.submittedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        lastAttemptInfo = `
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.1);">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--accent);">Last Attempt Details</h4>
+            <div style="font-size: 0.85rem; color: var(--muted);">
+              <div>Score: <span style="color: ${lastAttempt.passed ? 'var(--ok)' : 'var(--error)'};">${lastAttempt.score}%</span> ${lastAttempt.passed ? '(Passed)' : '(Failed)'}</div>
+              <div>Correct: ${lastAttempt.correctAnswers}/${lastAttempt.totalQuestions} questions</div>
+              <div>Date: ${attemptDate} at ${attemptTime}</div>
+              ${lastAttempt.timeSpent ? `<div>Time: ${lastAttempt.timeSpent < 60 ? lastAttempt.timeSpent + ' seconds' : Math.round(lastAttempt.timeSpent / 60) + ' minutes'}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      card.innerHTML = `
+        <div class="week-header">
+          <h3 class="week-title">Week ${week.weekNumber}</h3>
+          <span class="week-status status-${status}">${statusLabel}</span>
+        </div>
+        <div class="week-score ${scoreClass}">${week.bestScore}%</div>
+        <p class="stat-label">Best Score (${week.totalAttempts} attempt${week.totalAttempts !== 1 ? 's' : ''})</p>
+        ${week.completedAt ? `<p class="stat-label">Completed: ${new Date(week.completedAt).toLocaleDateString()}</p>` : ''}
+        ${lastAttemptInfo}
+        <div class="week-actions">
+          <a href="/evaluation/${week.weekNumber}" class="btn ${week.completed ? 'btn-secondary' : ''}">
+            ${week.completed ? 'Review' : (week.totalAttempts > 0 ? 'Retake Quiz' : 'Take Quiz')}
+          </a>
+        </div>
+      `;
+      
+      return card;
+    }
+
+    function showError() {
+      document.getElementById('loadingScreen').classList.add('hidden');
+      document.getElementById('errorScreen').classList.remove('hidden');
+    }
+
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          window.location.href = '/';
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        // Force redirect even if logout fails
+        window.location.href = '/';
+      }
+    });
+  </script>
+</body>
+</html>
