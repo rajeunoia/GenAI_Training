@@ -78,15 +78,30 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     console.log('Deserializing user ID:', id);
+    console.log('ID type:', typeof id);
+    
+    // Check database connection
+    const mongoose = require('mongoose');
+    console.log('DB connection state during deserialization:', mongoose.connection.readyState);
+    
     const user = await User.findById(id);
     if (user) {
-      console.log('User deserialized:', user.email);
+      console.log('User deserialized successfully:', {
+        id: user._id,
+        email: user.email,
+        name: user.name
+      });
     } else {
       console.log('No user found for ID:', id);
+      console.log('Attempted to find user with ID type:', typeof id);
     }
     done(null, user);
   } catch (error) {
     console.error('Error deserializing user:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
     done(error, null);
   }
 });
