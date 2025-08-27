@@ -57,16 +57,17 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // Changed from 'none' to 'lax'
-    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Set domain for Vercel
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
+    // Remove domain setting to let it default to the current domain
+    path: '/' // Explicitly set path
   }
 }));
 
 console.log('Session configured with:', {
   nodeEnv: process.env.NODE_ENV,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
-  domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+  sameSite: 'lax',
+  path: '/',
   sessionName: 'genai.session'
 });
 
