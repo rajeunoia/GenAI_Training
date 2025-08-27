@@ -77,7 +77,7 @@ router.post('/logout', (req, res) => {
 });
 
 // Check authentication status
-router.get('/status', (req, res) => {
+router.get('/status', async (req, res) => {
   console.log('Auth status check:', {
     sessionId: req.sessionID,
     hasSession: !!req.session,
@@ -94,6 +94,36 @@ router.get('/status', (req, res) => {
   // Check if passport data exists in session
   if (req.session && req.session.passport) {
     console.log('Passport session data:', req.session.passport);
+    
+    // Try manual user lookup if passport data exists but isAuthenticated is false
+    if (!req.isAuthenticated() && req.session.passport.user) {
+      try {
+        console.log('Attempting manual user lookup for session user:', req.session.passport.user);
+        const User = require('../models/User');
+        const user = await User.findById(req.session.passport.user);
+        
+        if (user) {
+          console.log('Manual user lookup successful:', {
+            id: user._id,
+            email: user.email,
+            name: user.name
+          });
+          
+          return res.json({
+            authenticated: true,
+            user: {
+              id: user._id,
+              name: user.name,
+              email: user.email,
+              avatar: user.avatar
+            },
+            note: 'Authentication via manual session lookup'
+          });
+        }
+      } catch (error) {
+        console.error('Manual user lookup failed:', error);
+      }
+    }
   }
   
   if (req.isAuthenticated()) {
