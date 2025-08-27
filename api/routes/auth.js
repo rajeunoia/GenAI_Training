@@ -151,4 +151,49 @@ router.get('/debug', async (req, res) => {
   }
 });
 
+// Test deserialization with known user ID
+router.get('/test-deserialize/:userId', async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const userId = req.params.userId;
+    
+    console.log('Testing deserialization for user ID:', userId);
+    
+    // Try to find the user directly
+    const user = await User.findById(userId);
+    
+    if (user) {
+      console.log('User found directly:', {
+        id: user._id,
+        email: user.email,
+        name: user.name
+      });
+      
+      res.json({
+        success: true,
+        user: {
+          id: user._id,
+          email: user.email,
+          name: user.name
+        },
+        directQuery: 'success'
+      });
+    } else {
+      console.log('No user found for ID:', userId);
+      res.json({
+        success: false,
+        message: 'User not found',
+        userId: userId
+      });
+    }
+  } catch (error) {
+    console.error('Test deserialization error:', error);
+    res.status(500).json({
+      error: 'Deserialization test failed',
+      details: error.message,
+      userId: req.params.userId
+    });
+  }
+});
+
 module.exports = router;
