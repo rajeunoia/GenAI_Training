@@ -63,8 +63,9 @@ router.get('/progress', authenticateToken, requireAuth, async (req, res) => {
 
     // Calculate overall statistics
     const completedWeeks = weeklyProgress.filter(w => w.completed).length;
-    const totalScore = weeklyProgress.reduce((sum, w) => sum + w.bestScore, 0);
-    const averageScore = completedWeeks > 0 ? Math.round(totalScore / completedWeeks) : 0;
+    const weeksWithAttempts = weeklyProgress.filter(w => w.totalAttempts > 0);
+    const totalScore = weeksWithAttempts.reduce((sum, w) => sum + w.bestScore, 0);
+    const averageScore = weeksWithAttempts.length > 0 ? Math.round(totalScore / weeksWithAttempts.length) : 0;
     const totalAttempts = weeklyProgress.reduce((sum, w) => sum + w.totalAttempts, 0);
 
     res.json({
