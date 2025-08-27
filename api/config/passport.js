@@ -80,9 +80,22 @@ passport.deserializeUser(async (id, done) => {
     console.log('Deserializing user ID:', id);
     console.log('ID type:', typeof id);
     
-    // Check database connection
+    // Check database connection and ensure it's connected
     const mongoose = require('mongoose');
     console.log('DB connection state during deserialization:', mongoose.connection.readyState);
+    
+    // If not connected, try to reconnect
+    if (mongoose.connection.readyState !== 1) {
+      console.log('Database not connected, attempting to reconnect...');
+      const connectDB = require('./database');
+      await connectDB();
+    }
+    
+    // Ensure we have a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log('Invalid ObjectId format:', id);
+      return done(new Error('Invalid user ID format'), null);
+    }
     
     const user = await User.findById(id);
     if (user) {
@@ -91,18 +104,19 @@ passport.deserializeUser(async (id, done) => {
         email: user.email,
         name: user.name
       });
+      return done(null, user);
     } else {
       console.log('No user found for ID:', id);
       console.log('Attempted to find user with ID type:', typeof id);
+      return done(null, false); // Return false instead of null for "no user found"
     }
-    done(null, user);
   } catch (error) {
     console.error('Error deserializing user:', error);
     console.error('Error details:', {
       message: error.message,
       stack: error.stack
     });
-    done(error, null);
+    return done(null, false); // Return false instead of error to prevent session issues
   }
 });
 
