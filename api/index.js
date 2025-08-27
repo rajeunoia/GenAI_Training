@@ -103,6 +103,35 @@ app.get('/dashboard', authenticateToken, (req, res) => {
   }
 });
 
+// Evaluation routes (serve static HTML files)
+app.get('/evaluation/:weekNumber', (req, res) => {
+  const weekNumber = parseInt(req.params.weekNumber);
+  
+  if (weekNumber < 1 || weekNumber > 6) {
+    return res.status(404).send('Evaluation not found');
+  }
+  
+  const filePath = path.join(__dirname, '..', 'evaluation', `genai_week${weekNumber}_evaluation.html`);
+  
+  // Check if file exists
+  const fs = require('fs');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Evaluation not found');
+  }
+});
+
+// Training content route
+app.get('/training', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'GenAi_Training.html'));
+});
+
+// How to take training route  
+app.get('/how-to-take-training', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'how_to_take_training.html'));
+});
+
 // 404 handler for API routes
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });

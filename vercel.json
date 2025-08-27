@@ -24,20 +24,20 @@
       "dest": "/index.html"
     },
     {
+      "src": "/evaluation/(\\d+)",
+      "dest": "/api/index.js"
+    },
+    {
       "src": "/dashboard",
-      "dest": "/dashboard.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/training",
-      "dest": "/GenAi_Training.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/how-to-take-training",
-      "dest": "/how_to_take_training.html"
-    },
-    {
-      "src": "/evaluation/(\\d+)",
-      "dest": "/evaluation/genai_week$1_evaluation.html"
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*)",
