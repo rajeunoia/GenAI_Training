@@ -18,7 +18,13 @@ passport.use(new GoogleStrategy({
       photos: profile.photos
     });
     
+    // Check database connection
+    const mongoose = require('mongoose');
+    console.log('Database connection state:', mongoose.connection.readyState);
+    console.log('Database connection name:', mongoose.connection.name);
+    
     // Check if user already exists
+    console.log('Attempting to find user with googleId:', profile.id);
     let user = await User.findOne({ googleId: profile.id });
     
     if (user) {
@@ -26,9 +32,16 @@ passport.use(new GoogleStrategy({
       // Update last login
       user.lastLogin = new Date();
       await user.save();
+      console.log('User last login updated');
       return done(null, user);
     } else {
-      console.log('Creating new user');
+      console.log('Creating new user with data:', {
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        name: profile.displayName,
+        avatar: profile.photos[0].value
+      });
+      
       // Create new user
       user = new User({
         googleId: profile.id,
@@ -38,13 +51,21 @@ passport.use(new GoogleStrategy({
         lastLogin: new Date()
       });
       
-      await user.save();
-      console.log('New user created:', user.email);
-      return done(null, user);
+      const savedUser = await user.save();
+      console.log('New user created successfully:', {
+        id: savedUser._id,
+        email: savedUser.email
+      });
+      return done(null, savedUser);
     }
   } catch (error) {
     console.error('Error in Google Strategy:', error);
-    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      name: error.name,
+      code: error.code,
+      stack: error.stack
+    });
     return done(error, null);
   }
 }));

@@ -6,9 +6,15 @@
   "scripts": {
     "dev": "node api/index.js",
     "start": "node api/index.js",
-    "build": "echo 'Build complete'"
+    "build": "echo 'Build complete'",
+    "test:api": "node test-api-simple.js",
+    "test:oauth": "node test-oauth-playwright.js",
+    "test:playwright": "npx playwright test",
+    "test:playwright:ui": "npx playwright test --ui",
+    "test:setup": "npm install && npx playwright install"
   },
   "dependencies": {
+    "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -20,6 +26,7 @@
     "passport-google-oauth20": "^2.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "nodemon": "^3.0.2"
   },
   "engines": {

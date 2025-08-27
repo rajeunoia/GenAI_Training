@@ -25,7 +25,7 @@
     },
     {
       "src": "/dashboard",
-      "dest": "/api/index.js"
+      "dest": "/dashboard.html"
     },
     {
       "src": "/training",
