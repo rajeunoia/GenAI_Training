@@ -105,22 +105,50 @@ router.get('/status', (req, res) => {
   }
 });
 
-// Debug endpoint to check OAuth configuration
-router.get('/debug', (req, res) => {
-  const config = {
-    environment: process.env.NODE_ENV,
-    hasClientId: !!process.env.GOOGLE_CLIENT_ID,
-    hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
-    hasSessionSecret: !!process.env.SESSION_SECRET,
-    clientIdPrefix: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Missing',
-    callbackURL: process.env.NODE_ENV === 'production' 
-      ? "https://turingdata-genai-training.vercel.app/api/auth/google/callback"
-      : "/api/auth/google/callback",
-    timestamp: new Date().toISOString()
-  };
-  
-  console.log('OAuth Debug Info:', config);
-  res.json(config);
+// Debug endpoint to check OAuth configuration and recent users
+router.get('/debug', async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const mongoose = require('mongoose');
+    
+    // Get recent users (last 10)
+    const recentUsers = await User.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .select('email name createdAt lastLogin googleId');
+    
+    const config = {
+      environment: process.env.NODE_ENV,
+      hasClientId: !!process.env.GOOGLE_CLIENT_ID,
+      hasClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+      hasSessionSecret: !!process.env.SESSION_SECRET,
+      clientIdPrefix: process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Missing',
+      callbackURL: process.env.NODE_ENV === 'production' 
+        ? "https://turingdata-genai-training.vercel.app/api/auth/google/callback"
+        : "/api/auth/google/callback",
+      dbConnection: mongoose.connection.readyState,
+      dbName: mongoose.connection.name,
+      totalUsers: await User.countDocuments(),
+      recentUsers: recentUsers.map(user => ({
+        email: user.email,
+        name: user.name,
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin,
+        googleId: user.googleId.substring(0, 10) + '...'
+      })),
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('OAuth Debug Info:', config);
+    res.json(config);
+  } catch (error) {
+    console.error('Debug endpoint error:', error);
+    res.status(500).json({
+      error: 'Debug failed',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 module.exports = router;
