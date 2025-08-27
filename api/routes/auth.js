@@ -81,11 +81,20 @@ router.get('/status', (req, res) => {
   console.log('Auth status check:', {
     sessionId: req.sessionID,
     hasSession: !!req.session,
+    sessionKeys: req.session ? Object.keys(req.session) : [],
+    sessionPassport: req.session ? req.session.passport : 'No passport in session',
     isAuthenticated: req.isAuthenticated(),
     hasUser: !!req.user,
     userId: req.user ? req.user._id : 'No user',
-    sessionStore: req.sessionStore.constructor.name
+    sessionStore: req.sessionStore.constructor.name,
+    cookies: req.headers.cookie ? 'Has cookies' : 'No cookies',
+    userAgent: req.headers['user-agent']?.substring(0, 50) + '...'
   });
+  
+  // Check if passport data exists in session
+  if (req.session && req.session.passport) {
+    console.log('Passport session data:', req.session.passport);
+  }
   
   if (req.isAuthenticated()) {
     res.json({
