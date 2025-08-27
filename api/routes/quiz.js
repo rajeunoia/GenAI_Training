@@ -71,7 +71,7 @@ router.get('/:weekNumber/questions', authMiddleware, async (req, res) => {
 });
 
 // Submit quiz attempt
-router.post('/:weekNumber/submit', requireAuth, async (req, res) => {
+router.post('/:weekNumber/submit', authMiddleware, async (req, res) => {
   try {
     const weekNumber = parseInt(req.params.weekNumber);
     const { responses, timeSpent, questionsShown } = req.body;
