@@ -8,6 +8,7 @@ const path = require('path');
 
 const connectDB = require('./config/database');
 const passport = require('./config/passport');
+const { authenticateToken, isAuthenticated } = require('./middleware/jwt-auth');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -94,8 +95,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // Dashboard route (needs authentication)
-app.get('/dashboard', (req, res) => {
-  if (req.isAuthenticated()) {
+app.get('/dashboard', authenticateToken, (req, res) => {
+  if (isAuthenticated(req)) {
     res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
   } else {
     res.redirect('/');

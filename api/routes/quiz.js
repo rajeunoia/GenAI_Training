@@ -1,13 +1,35 @@
 const express = require('express');
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken, isAuthenticated } = require('../middleware/jwt-auth');
 const { mockAuth } = require('../middleware/mock-auth');
 const UserProgress = require('../models/UserProgress');
 const QuizAttempt = require('../models/QuizAttempt');
 const { getRandomQuestions } = require('../data/quizQuestions');
 const router = express.Router();
 
-// Use mock auth in development when DB is not available
-const authMiddleware = process.env.NODE_ENV === 'development' ? mockAuth : requireAuth;
+// JWT Authentication middleware for all quiz routes
+const requireAuth = (req, res, next) => {
+  if (!isAuthenticated(req)) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+};
+
+// Use JWT auth middleware with fallback to mock auth in development when needed
+const authMiddleware = (req, res, next) => {
+  // First try JWT authentication
+  authenticateToken(req, res, () => {
+    if (isAuthenticated(req)) {
+      return next();
+    }
+    
+    // Fallback to mock auth in development if JWT fails
+    if (process.env.NODE_ENV === 'development') {
+      return mockAuth(req, res, next);
+    }
+    
+    return res.status(401).json({ error: 'Authentication required' });
+  });
+};
 
 // Get quiz questions for a specific week
 router.get('/:weekNumber/questions', authMiddleware, async (req, res) => {

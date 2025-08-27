@@ -1,11 +1,19 @@
 const express = require('express');
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken, isAuthenticated } = require('../middleware/jwt-auth');
 const UserProgress = require('../models/UserProgress');
 const QuizAttempt = require('../models/QuizAttempt');
 const router = express.Router();
 
+// JWT Authentication middleware for all user routes
+const requireAuth = (req, res, next) => {
+  if (!isAuthenticated(req)) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+};
+
 // Get user profile
-router.get('/profile', requireAuth, (req, res) => {
+router.get('/profile', authenticateToken, requireAuth, (req, res) => {
   res.json({
     id: req.user._id,
     name: req.user.name,
@@ -17,7 +25,7 @@ router.get('/profile', requireAuth, (req, res) => {
 });
 
 // Get user's overall progress
-router.get('/progress', requireAuth, async (req, res) => {
+router.get('/progress', authenticateToken, requireAuth, async (req, res) => {
   try {
     const progress = await UserProgress.find({ 
       userId: req.user._id 
@@ -78,7 +86,7 @@ router.get('/progress', requireAuth, async (req, res) => {
 });
 
 // Get detailed progress for a specific week
-router.get('/progress/:weekNumber', requireAuth, async (req, res) => {
+router.get('/progress/:weekNumber', authenticateToken, requireAuth, async (req, res) => {
   try {
     const weekNumber = parseInt(req.params.weekNumber);
     
@@ -122,7 +130,7 @@ router.get('/progress/:weekNumber', requireAuth, async (req, res) => {
 });
 
 // Get user's quiz history
-router.get('/history', requireAuth, async (req, res) => {
+router.get('/history', authenticateToken, requireAuth, async (req, res) => {
   try {
     const attempts = await QuizAttempt.find({ 
       userId: req.user._id 

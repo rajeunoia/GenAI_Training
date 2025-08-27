@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('../config/passport');
+const { generateToken, setTokenCookie, clearTokenCookie, authenticateToken, isAuthenticated } = require('../middleware/jwt-auth');
 const router = express.Router();
 
 // Initiate Google OAuth
@@ -36,97 +37,51 @@ router.get('/google/callback', (req, res, next) => {
       });
     }
     
-    // Log in the user
-    req.logIn(user, (loginErr) => {
-      if (loginErr) {
-        console.error('Login error:', loginErr);
-        return res.status(500).json({ 
-          error: 'Login failed', 
-          details: loginErr.message,
-          timestamp: new Date().toISOString()
-        });
-      }
+    // Generate JWT token and set cookie
+    try {
+      console.log('Generating JWT token for user:', user.email);
+      const token = generateToken(user);
+      setTokenCookie(res, token);
       
-      console.log('Authentication successful');
-      console.log('Session after login:', {
-        sessionId: req.sessionID,
-        isAuthenticated: req.isAuthenticated(),
-        userId: req.user ? req.user._id : 'No user',
-        sessionStore: req.sessionStore.constructor.name
+      console.log('JWT authentication successful');
+      console.log('Token generated for user:', {
+        userId: user._id,
+        email: user.email,
+        name: user.name
       });
       
       console.log('Redirecting to dashboard');
       res.redirect('/dashboard');
-    });
+    } catch (tokenError) {
+      console.error('Token generation error:', tokenError);
+      return res.status(500).json({ 
+        error: 'Token generation failed', 
+        details: tokenError.message,
+        timestamp: new Date().toISOString()
+      });
+    }
   })(req, res, next);
 });
 
 // Logout route
 router.post('/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Session destruction failed' });
-      }
-      res.json({ message: 'Logged out successfully' });
-    });
-  });
+  console.log('User logout requested');
+  clearTokenCookie(res);
+  res.json({ message: 'Logged out successfully' });
 });
 
 // Check authentication status
-router.get('/status', async (req, res) => {
+router.get('/status', authenticateToken, (req, res) => {
   console.log('Auth status check:', {
-    sessionId: req.sessionID,
-    hasSession: !!req.session,
-    sessionKeys: req.session ? Object.keys(req.session) : [],
-    sessionPassport: req.session ? req.session.passport : 'No passport in session',
-    isAuthenticated: req.isAuthenticated(),
+    hasAuthToken: !!req.cookies.authToken,
     hasUser: !!req.user,
     userId: req.user ? req.user._id : 'No user',
-    sessionStore: req.sessionStore.constructor.name,
+    userEmail: req.user ? req.user.email : 'No email',
     cookies: req.headers.cookie ? 'Has cookies' : 'No cookies',
-    userAgent: req.headers['user-agent']?.substring(0, 50) + '...'
+    authMethod: 'JWT'
   });
   
-  // Check if passport data exists in session
-  if (req.session && req.session.passport) {
-    console.log('Passport session data:', req.session.passport);
-    
-    // Try manual user lookup if passport data exists but isAuthenticated is false
-    if (!req.isAuthenticated() && req.session.passport.user) {
-      try {
-        console.log('Attempting manual user lookup for session user:', req.session.passport.user);
-        const User = require('../models/User');
-        const user = await User.findById(req.session.passport.user);
-        
-        if (user) {
-          console.log('Manual user lookup successful:', {
-            id: user._id,
-            email: user.email,
-            name: user.name
-          });
-          
-          return res.json({
-            authenticated: true,
-            user: {
-              id: user._id,
-              name: user.name,
-              email: user.email,
-              avatar: user.avatar
-            },
-            note: 'Authentication via manual session lookup'
-          });
-        }
-      } catch (error) {
-        console.error('Manual user lookup failed:', error);
-      }
-    }
-  }
-  
-  if (req.isAuthenticated()) {
+  if (isAuthenticated(req)) {
     res.json({
       authenticated: true,
       user: {
@@ -134,12 +89,14 @@ router.get('/status', async (req, res) => {
         name: req.user.name,
         email: req.user.email,
         avatar: req.user.avatar
-      }
+      },
+      authMethod: 'JWT'
     });
   } else {
     res.json({
       authenticated: false,
-      user: null
+      user: null,
+      authMethod: 'JWT'
     });
   }
 });
