@@ -47,7 +47,15 @@ router.get('/google/callback', (req, res, next) => {
         });
       }
       
-      console.log('Authentication successful, redirecting to dashboard');
+      console.log('Authentication successful');
+      console.log('Session after login:', {
+        sessionId: req.sessionID,
+        isAuthenticated: req.isAuthenticated(),
+        userId: req.user ? req.user._id : 'No user',
+        sessionStore: req.sessionStore.constructor.name
+      });
+      
+      console.log('Redirecting to dashboard');
       res.redirect('/dashboard');
     });
   })(req, res, next);
@@ -70,6 +78,15 @@ router.post('/logout', (req, res) => {
 
 // Check authentication status
 router.get('/status', (req, res) => {
+  console.log('Auth status check:', {
+    sessionId: req.sessionID,
+    hasSession: !!req.session,
+    isAuthenticated: req.isAuthenticated(),
+    hasUser: !!req.user,
+    userId: req.user ? req.user._id : 'No user',
+    sessionStore: req.sessionStore.constructor.name
+  });
+  
   if (req.isAuthenticated()) {
     res.json({
       authenticated: true,
