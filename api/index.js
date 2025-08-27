@@ -48,22 +48,26 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
+  name: 'genai.session', // Custom session name
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/genai-training',
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', 
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Important for cross-origin in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // Changed from 'none' to 'lax'
+    domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined // Set domain for Vercel
   }
 }));
 
 console.log('Session configured with:', {
   nodeEnv: process.env.NODE_ENV,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
+  domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+  sessionName: 'genai.session'
 });
 
 // Passport middleware
