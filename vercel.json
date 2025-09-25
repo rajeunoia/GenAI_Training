@@ -40,6 +40,10 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/coursera-week2-alternative",
+      "dest": "/coursera_week2_alternative.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/api/index.js"
     }
